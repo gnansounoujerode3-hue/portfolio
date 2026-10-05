@@ -15,6 +15,7 @@ const out = process.env.HMG_LOOKBOOK_OUTPUT
 const asset = (name) => path.join(root, name);
 
 const A = {
+  logoOriginal: asset('WhatsApp Image 2026-10-03 at 16.03.17.jpeg'),
   logoWhite: path.join(__dirname, 'ange-hmg-home-logo-white.png'),
   logoBlack: path.join(__dirname, 'ange-hmg-home-logo.png'),
   solarHero: asset('WhatsApp Image 2026-10-05 at 00.40.12 (1).jpeg'),
@@ -46,6 +47,30 @@ const A = {
   finishLace: asset('WhatsApp Image 2026-10-05 at 00.40.15 (1).jpeg'),
   finishBride: asset('WhatsApp Image 2026-10-05 at 00.38.25 (2).jpeg'),
   contact: asset('WhatsApp Image 2026-10-05 at 00.38.14.jpeg'),
+  // Vues complémentaires — chaque image source est intégrée au catalogue final.
+  blueTrad: asset('WhatsApp Image 2026-10-05 at 00.38.18 (1).jpeg'),
+  solarDuo: asset('WhatsApp Image 2026-10-05 at 00.38.18.jpeg'),
+  solarGroup: asset('WhatsApp Image 2026-10-05 at 00.38.19.jpeg'),
+  champagneEarly: asset('WhatsApp Image 2026-10-05 at 00.38.22 (1).jpeg'),
+  ivoryA: asset('WhatsApp Image 2026-10-05 at 00.38.26 (1).jpeg'),
+  ivoryB: asset('WhatsApp Image 2026-10-05 at 00.38.26 (2).jpeg'),
+  ivoryC: asset('WhatsApp Image 2026-10-05 at 00.38.26.jpeg'),
+  champagneB: asset('WhatsApp Image 2026-10-05 at 00.38.27.jpeg'),
+  champagneC: asset('WhatsApp Image 2026-10-05 at 00.38.28 (1).jpeg'),
+  champagneD: asset('WhatsApp Image 2026-10-05 at 00.38.28.jpeg'),
+  champagneE: asset('WhatsApp Image 2026-10-05 at 00.38.30 (1).jpeg'),
+  champagneF: asset('WhatsApp Image 2026-10-05 at 00.38.30 (2).jpeg'),
+  champagneG: asset('WhatsApp Image 2026-10-05 at 00.38.31.jpeg'),
+  ivoryD: asset('WhatsApp Image 2026-10-05 at 00.38.33 (1).jpeg'),
+  ivoryE: asset('WhatsApp Image 2026-10-05 at 00.38.33 (2).jpeg'),
+  ivoryF: asset('WhatsApp Image 2026-10-05 at 00.38.33 (3).jpeg'),
+  ivoryG: asset('WhatsApp Image 2026-10-05 at 00.38.33.jpeg'),
+  violetA: asset('WhatsApp Image 2026-10-05 at 00.40.12 (2).jpeg'),
+  violetB: asset('WhatsApp Image 2026-10-05 at 00.40.12.jpeg'),
+  solarBlack: asset('WhatsApp Image 2026-10-05 at 00.40.13.jpeg'),
+  civilA: asset('WhatsApp Image 2026-10-05 at 00.40.14 (2).jpeg'),
+  civilB: asset('WhatsApp Image 2026-10-05 at 00.40.14.jpeg'),
+  weddingGroup: asset('WhatsApp Image 2026-10-05 at 00.40.16 (1).jpeg'),
 };
 
 const C = {
@@ -181,6 +206,7 @@ function guide() {
   ];
   read.forEach((r, i) => { const y = 462 + i * 75; text(r[0], M, y, { font: 'Helvetica-Bold', size: 8, color: C.gold, characterSpacing: 1.3 }); serif(r[1], M + 42, y - 5, { size: 17, width: 170 }); text(r[2], M + 42, y + 22, { font: 'Helvetica', size: 8.5, color: C.muted, width: 210, lineGap: 2 }); });
   rect(350, 454, 203, 187, C.earth); cap('Note de collection', 370, 482, { color: C.pale }); serif('Le sur-mesure commence par une silhouette, puis se précise dans le détail.', 370, 515, { width: 150, size: 18, color: C.white, lineGap: 3 });
+  rect(350, 667, 203, 70, C.white); imageCover(A.logoOriginal, 369, 677, 165, 50, { align: .5, valign: .5 });
 }
 function modelPage(look, no) {
   page(no % 2 === 0 ? C.cream : C.paper);
@@ -199,8 +225,30 @@ function modelPage(look, no) {
   text('Modèle présenté en photos réelles · Atelier HMG HOME', M, 798, { font: 'Helvetica', size: 6.5, color: C.muted, characterSpacing: .2 });
   text(look.code, W - M - 65, 798, { font: 'Helvetica-Bold', size: 6.5, color: look.color, width: 65, align: 'right', characterSpacing: .8 });
 }
+function galleryPage(kicker, title, caption, photos, number, color = C.earth) {
+  page(C.cream); header(kicker, title, number, { size: 29, width: 430 });
+  text(caption, M, 147, { font: 'Helvetica', size: 9, color: C.muted, width: 440, lineGap: 2 });
+  const y = 192;
+  if (photos.length === 2) {
+    imageCover(photos[0], M, y, 245, 442, { align: .5, valign: .48 });
+    imageCover(photos[1], 308, y, 245, 442, { align: .5, valign: .48 });
+  } else if (photos.length === 3) {
+    imageCover(photos[0], M, y, 275, 430, { align: .5, valign: .48 });
+    imageCover(photos[1], 337, y, 216, 202, { align: .5, valign: .5 });
+    imageCover(photos[2], 337, y + 228, 216, 202, { align: .5, valign: .5 });
+  } else if (photos.length === 4) {
+    [[M, y], [306, y], [M, y + 245], [306, y + 245]].forEach((pos, i) => imageCover(photos[i], pos[0], pos[1], 247, 218, { align: .5, valign: .5 }));
+  } else {
+    // Seven images: six detailed tiles plus one final wide view.
+    const cols = [M, 220, 398];
+    photos.slice(0, 6).forEach((photo, i) => imageCover(photo, cols[i % 3], y + Math.floor(i / 3) * 194, 155, 176, { align: .5, valign: .5 }));
+    imageCover(photos[6], M, y + 405, 511, 116, { align: .5, valign: .5 });
+  }
+  line(M, 744, W - M, 744, C.line, .55);
+  cap('Vues complémentaires du même univers vestimentaire', M, 763, { color, size: 6.3 });
+}
 function detailPage() {
-  page(C.dark); header('Finitions HMG', 'Ce que le détail\nchange à la silhouette.', 12, { dark: true, size: 31, width: 360 });
+  page(C.dark); header('Finitions HMG', 'Ce que le détail\nchange à la silhouette.', 18, { dark: true, size: 31, width: 360 });
   imageCover(A.ivoryBeading, M, 205, 241, 287, { align: .5 }); imageCover(A.finishVeil, 311, 205, 242, 287, { align: .5 });
   imageCover(A.finishLace, M, 510, 158, 145, { align: .5 }); imageCover(A.finishBride, 176, 510, 158, 145, { align: .5 }); imageCover(A.blueDetail, 352, 510, 201, 145, { align: .5 });
   cap('Matières, perles, transparences, drapés', M, 691, { color: C.pale });
@@ -211,12 +259,19 @@ function contactPage() {
   imageContain(A.logoWhite, M, 42, 176, 78, { align: 0 }); cap('Un modèle à imaginer ?', M, 162, { color: C.pale }); serif('Construisons\nvotre prochaine allure.', M, 190, { width: 360, size: 32, color: C.white, lineGap: -3 });
   line(M, 358, W - M, 358, C.gold, .8); cap('Atelier', M, 401, { color: C.pale }); serif('Tankpè, Abomey-Calavi · Bénin', M, 430, { size: 19, color: C.white });
   cap('Contact', M, 505, { color: C.pale }); text('01 42 65 66 61', M, 535, { font: 'Times-Roman', size: 25, color: C.white }); cap('Réseaux', M, 611, { color: C.pale }); text('@Ange_hmg_home', M, 641, { font: 'Times-Roman', size: 24, color: C.white });
-  text('TikTok · Instagram', M, 680, { font: 'Helvetica', size: 8, color: '#E6D9CE' }); line(M, 720, W - M, 720, '#755C50', .55); serif('Héritier du fil, créateur de style.', M, 744, { size: 20, color: C.pale });
+  text('TikTok · Instagram', M, 680, { font: 'Helvetica', size: 8, color: '#E6D9CE' }); line(M, 720, W - M, 720, '#755C50', .55); serif('Héritier du fil, créateur de style.', M, 744, { size: 20, color: C.pale }); footer(19, true);
 }
 
 function generate() {
   doc = new PDFDocument({ size: 'A4', margin: 0, autoFirstPage: false, bufferPages: true, info: { Title: 'ANGE HMG HOME — Catalogue de créations 2026', Author: 'HOUEMAGNON Ange-Marie Mahouna Coovi Pegaz Fidèl', Subject: 'Catalogue de vêtements portés et modèles HMG HOME', CreationDate: new Date('2026-10-05T00:00:00Z') } });
-  const stream = fs.createWriteStream(out); doc.pipe(stream); cover(); guide(); looks.forEach((look, index) => modelPage(look, index + 1)); detailPage(); contactPage(); doc.end();
+  const stream = fs.createWriteStream(out); doc.pipe(stream); cover(); guide(); looks.forEach((look, index) => modelPage(look, index + 1));
+  galleryPage('Améthyste royale', 'Vues complémentaires.', 'Autres portés du duo violet et argent : le même univers de cérémonie, observé sous plusieurs angles.', [A.violetA, A.violetB, A.solarBlack], 12, C.plum);
+  galleryPage('Bleu roi perlé', 'Vues complémentaires.', 'Autres images de la tenue bleu roi perlée et de son contexte de cérémonie.', [A.blueTrad, A.solarGroup], 13, C.blue);
+  galleryPage('Solaire & orange', 'Le duo en lumière.', 'Les tenues jaune, orange et bordeaux réunies : robe de cérémonie et ensemble homme de célébration.', [A.solarDuo, A.civilA, A.orangeDuo], 14, '#8B422C');
+  galleryPage('Mariée ivoire', 'Vues complémentaires.', 'Variations, détails et scènes de la robe de mariée ivoire : du porté à la traîne et aux finitions.', [A.ivoryA, A.ivoryB, A.ivoryC, A.ivoryD, A.ivoryE, A.ivoryF, A.ivoryG], 15, '#9B8262');
+  galleryPage('Cortège champagne', 'Vues complémentaires.', 'Les différentes vues du cortège champagne soulignent l’unité de la ligne, des détails d’épaule et du mouvement.', [A.champagneEarly, A.champagneB, A.champagneC, A.champagneD, A.champagneE, A.champagneF, A.champagneG], 16, '#A68A6B');
+  galleryPage('Moments de mariage', 'Civil & cérémonie.', 'Vues complémentaires des silhouettes ivoire, sable, noir et blanc portées pendant les cérémonies.', [A.civilB, A.weddingGroup], 17, '#8E714F');
+  detailPage(); contactPage(); doc.end();
   stream.on('finish', () => {
     if (exportTextLayer) {
       const file = process.env.HMG_LOOKBOOK_TEXT_OUTPUT ? path.resolve(process.env.HMG_LOOKBOOK_TEXT_OUTPUT) : path.join(root, '_work', 'lookbook-text-layer.json'); fs.mkdirSync(path.dirname(file), { recursive: true });
