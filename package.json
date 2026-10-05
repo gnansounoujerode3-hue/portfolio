@@ -1,0 +1,25 @@
+{
+  "name": "portfolio",
+  "version": "1.0.0",
+  "description": "Source éditable du dossier de marque ANGE HMG HOME",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build:portfolio": "node portfolio-source/generate-portfolio.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/gnansounoujerode3-hue/portfolio.git"
+  },
+  "keywords": [],
+  "author": "ANGE HMG HOME",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/gnansounoujerode3-hue/portfolio/issues"
+  },
+  "homepage": "https://github.com/gnansounoujerode3-hue/portfolio#readme",
+  "dependencies": {
+    "pdfkit": "^0.16.0"
+  },
+  "private": true
+}
