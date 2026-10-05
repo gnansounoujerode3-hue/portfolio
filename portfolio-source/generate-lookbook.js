@@ -164,7 +164,7 @@ const looks = [
   },
   {
     code: 'HMG 07', title: 'Marié ivoire & noir', category: 'Veste de mariage homme', color: '#4B3C38',
-    hero: A.groomHero, photo2: A.groomWide, photo3: A.groomClose,
+    hero: A.groomHero, photo2: A.groomWide, photo3: A.weddingGroup,
     description: 'Un look de marié construit autour d’une veste ivoire, d’un pantalon noir et d’un nœud papillon rouge. La coupe garde une lecture classique, relevée par une touche de couleur assumée.',
     details: ['Veste claire à revers contrastés.', 'Pantalon noir à ligne nette.', 'Nœud papillon rouge et boutonnière florale comme accents.'],
   },
@@ -179,6 +179,12 @@ const looks = [
     hero: A.orangeHero, photo2: A.orangeDuo, photo3: A.orangePortrait,
     description: 'Une tenue orange pensée pour une entrée remarquée. La couleur intense, la ligne ample et les éléments coordonnés donnent au modèle une énergie festive et contemporaine.',
     details: ['Couleur orange comme point focal de la silhouette.', 'Ensemble ample et confortable pour rester libre de ses mouvements.', 'Pour la dot, les célébrations traditionnelles et les photos de couple.'],
+  },
+  {
+    code: 'HMG 10', title: 'Rouge d’apparat', category: 'Duo de cérémonie', color: '#A53A3A',
+    hero: A.ivoryE, photo2: null, photo3: null,
+    description: 'Un duo de cérémonie à l’allure affirmée, articulé autour d’une robe rouge lumineuse et d’une tenue homme claire. Une proposition pensée pour marquer un moment de célébration.',
+    details: ['Contraste entre le rouge intense et les tons clairs.', 'Silhouettes coordonnées pour une entrée de couple.', 'Pour une cérémonie, une réception ou un portrait de célébration.'],
   },
 ];
 
@@ -208,15 +214,24 @@ function guide() {
   rect(350, 454, 203, 187, C.earth); cap('Note de collection', 370, 482, { color: C.pale }); serif('Le sur-mesure commence par une silhouette, puis se précise dans le détail.', 370, 515, { width: 150, size: 18, color: C.white, lineGap: 3 });
   rect(350, 667, 203, 70, C.white); imageCover(A.logoOriginal, 369, 677, 165, 50, { align: .5, valign: .5 });
 }
-function modelPage(look, no) {
-  page(no % 2 === 0 ? C.cream : C.paper);
-  header(`Modèle ${look.code}`, look.title, no + 2, { size: 31, width: 320 });
+function modelPage(look, pageNo) {
+  const modelNo = look.code.replace('HMG ', '');
+  page(Number(modelNo) % 2 === 0 ? C.cream : C.paper);
+  header(`Modèle ${look.code}`, look.title, pageNo, { size: 31, width: 320 });
   tag(look.category, M, 158, 170, look.color);
-  // Number used as an editorial marker, independent of text blocks
-  text(String(no).padStart(2, '0'), 483, 63, { font: 'Times-Roman', size: 56, color: look.color, opacity: .18, width: 70, align: 'right' });
+  // Number used as an editorial marker, independent of the physical page number.
+  text(String(modelNo).padStart(2, '0'), 483, 63, { font: 'Times-Roman', size: 56, color: look.color, opacity: .18, width: 70, align: 'right' });
   imageCover(look.hero, M, 204, 258, 365, { align: .5, valign: .48 });
-  imageCover(look.photo2, 321, 204, 232, 196, { align: .5, valign: .45 });
-  imageCover(look.photo3, 321, 416, 232, 153, { align: .5, valign: .48 });
+  if (look.photo2 && look.photo3) {
+    imageCover(look.photo2, 321, 204, 232, 196, { align: .5, valign: .45 });
+    imageCover(look.photo3, 321, 416, 232, 153, { align: .5, valign: .48 });
+  } else {
+    rect(321, 204, 232, 365, look.color);
+    cap('Pièce de cérémonie', 342, 235, { color: C.pale });
+    serif('Une silhouette de couple, pensée pour être remarquée.', 342, 274, { width: 165, size: 20, color: C.white, lineGap: 3 });
+    line(342, 420, 120, 420, C.pale, .7);
+    text('Modèle présenté dans une image de cérémonie.', 342, 443, { font: 'Helvetica', size: 8.4, color: '#F0DDD2', width: 158, lineGap: 2 });
+  }
   cap('Description du modèle', M, 608, { color: look.color });
   serif(look.description, M, 638, { width: 258, size: 13.4, lineGap: 3 });
   cap('Points clés', 321, 608, { color: look.color });
@@ -225,11 +240,13 @@ function modelPage(look, no) {
   text('Modèle présenté en photos réelles · Atelier HMG HOME', M, 798, { font: 'Helvetica', size: 6.5, color: C.muted, characterSpacing: .2 });
   text(look.code, W - M - 65, 798, { font: 'Helvetica-Bold', size: 6.5, color: look.color, width: 65, align: 'right', characterSpacing: .8 });
 }
-function galleryPage(kicker, title, caption, photos, number, color = C.earth) {
-  page(C.cream); header(kicker, title, number, { size: 29, width: 430 });
+function seriesPage(code, title, caption, photos, number, color = C.earth) {
+  page(C.cream); header(`${code} / Série portée`, `${title} —\nsérie complète.`, number, { size: 28, width: 430 });
   text(caption, M, 147, { font: 'Helvetica', size: 9, color: C.muted, width: 440, lineGap: 2 });
   const y = 192;
-  if (photos.length === 2) {
+  if (photos.length === 1) {
+    imageCover(photos[0], 146, y, 303, 451, { align: .5, valign: .48 });
+  } else if (photos.length === 2) {
     imageCover(photos[0], M, y, 245, 442, { align: .5, valign: .48 });
     imageCover(photos[1], 308, y, 245, 442, { align: .5, valign: .48 });
   } else if (photos.length === 3) {
@@ -238,6 +255,9 @@ function galleryPage(kicker, title, caption, photos, number, color = C.earth) {
     imageCover(photos[2], 337, y + 228, 216, 202, { align: .5, valign: .5 });
   } else if (photos.length === 4) {
     [[M, y], [306, y], [M, y + 245], [306, y + 245]].forEach((pos, i) => imageCover(photos[i], pos[0], pos[1], 247, 218, { align: .5, valign: .5 }));
+  } else if (photos.length === 8) {
+    const cols = [M, 174, 306, 438];
+    photos.forEach((photo, i) => imageCover(photo, cols[i % 4], y + Math.floor(i / 4) * 238, 113, 218, { align: .5, valign: .5 }));
   } else {
     // Seven images: six detailed tiles plus one final wide view.
     const cols = [M, 220, 398];
@@ -245,7 +265,7 @@ function galleryPage(kicker, title, caption, photos, number, color = C.earth) {
     imageCover(photos[6], M, y + 405, 511, 116, { align: .5, valign: .5 });
   }
   line(M, 744, W - M, 744, C.line, .55);
-  cap('Vues complémentaires du même univers vestimentaire', M, 763, { color, size: 6.3 });
+  cap('Toutes les photos de ce modèle sont réunies dans cette séquence.', M, 763, { color, size: 6.3 });
 }
 function detailPage() {
   page(C.dark); header('Finitions HMG', 'Ce que le détail\nchange à la silhouette.', 18, { dark: true, size: 31, width: 360 });
@@ -264,14 +284,25 @@ function contactPage() {
 
 function generate() {
   doc = new PDFDocument({ size: 'A4', margin: 0, autoFirstPage: false, bufferPages: true, info: { Title: 'ANGE HMG HOME — Catalogue de créations 2026', Author: 'HOUEMAGNON Ange-Marie Mahouna Coovi Pegaz Fidèl', Subject: 'Catalogue de vêtements portés et modèles HMG HOME', CreationDate: new Date('2026-10-05T00:00:00Z') } });
-  const stream = fs.createWriteStream(out); doc.pipe(stream); cover(); guide(); looks.forEach((look, index) => modelPage(look, index + 1));
-  galleryPage('Améthyste royale', 'Vues complémentaires.', 'Autres portés du duo violet et argent : le même univers de cérémonie, observé sous plusieurs angles.', [A.violetA, A.violetB, A.solarBlack], 12, C.plum);
-  galleryPage('Bleu roi perlé', 'Vues complémentaires.', 'Autres images de la tenue bleu roi perlée et de son contexte de cérémonie.', [A.blueTrad, A.solarGroup], 13, C.blue);
-  galleryPage('Solaire & orange', 'Le duo en lumière.', 'Les tenues jaune, orange et bordeaux réunies : robe de cérémonie et ensemble homme de célébration.', [A.solarDuo, A.civilA, A.orangeDuo], 14, '#8B422C');
-  galleryPage('Mariée ivoire', 'Vues complémentaires.', 'Variations, détails et scènes de la robe de mariée ivoire : du porté à la traîne et aux finitions.', [A.ivoryA, A.ivoryB, A.ivoryC, A.ivoryD, A.ivoryE, A.ivoryF, A.ivoryG], 15, '#9B8262');
-  galleryPage('Cortège champagne', 'Vues complémentaires.', 'Les différentes vues du cortège champagne soulignent l’unité de la ligne, des détails d’épaule et du mouvement.', [A.champagneEarly, A.champagneB, A.champagneC, A.champagneD, A.champagneE, A.champagneF, A.champagneG], 16, '#A68A6B');
-  galleryPage('Moments de mariage', 'Civil & cérémonie.', 'Vues complémentaires des silhouettes ivoire, sable, noir et blanc portées pendant les cérémonies.', [A.civilB, A.weddingGroup], 17, '#8E714F');
-  detailPage(); contactPage(); doc.end();
+  const stream = fs.createWriteStream(out); doc.pipe(stream); cover(); guide();
+  // The complete visual sequence for each model stays together before the next model starts.
+  modelPage(looks[0], 3);
+  seriesPage('HMG 01', 'Améthyste royale', 'Toutes les déclinaisons photographiées du duo violet et argent sont réunies avant le modèle suivant.', [A.violetA, A.violetB, A.solarBlack], 4, C.plum);
+  modelPage(looks[1], 5);
+  modelPage(looks[2], 6);
+  seriesPage('HMG 03', 'Bleu roi perlé', 'Portraits et scènes de cérémonie de la robe bleu roi perlée, regroupés dans la même séquence.', [A.blueTrad, A.solarGroup], 7, C.blue);
+  modelPage(looks[3], 8);
+  seriesPage('HMG 04', 'Éclat solaire', 'Les autres photos de la robe solaire et du duo de cérémonie jaune-orange suivent directement cette fiche.', [A.solarDuo, A.civilA], 9, '#8B422C');
+  modelPage(looks[4], 10);
+  seriesPage('HMG 05', 'Ivoire perlé', 'Toutes les photos de la mariée ivoire — porté, traîne, détails et scène de cérémonie — sont réunies ici.', [A.ivoryA, A.ivoryB, A.ivoryC, A.ivoryD, A.ivoryF, A.ivoryG, A.finishVeil, A.finishBride], 11, '#9B8262');
+  modelPage(looks[5], 12);
+  seriesPage('HMG 06', 'Cortège champagne', 'Toutes les photos du cortège champagne sont réunies dans cette série : portés, détails de coupe et groupe.', [A.champagneEarly, A.champagneB, A.champagneC, A.champagneD, A.champagneE, A.champagneF, A.champagneG, A.groomClose], 13, '#A68A6B');
+  modelPage(looks[6], 14);
+  modelPage(looks[7], 15);
+  seriesPage('HMG 08', 'Civil ivoire & sable', 'Les photos de la tenue civile — dentelle, gants et veste sable — sont regroupées dans le même chapitre.', [A.civilB, A.finishLace], 16, '#8E714F');
+  modelPage(looks[8], 17);
+  modelPage(looks[9], 18);
+  contactPage(); doc.end();
   stream.on('finish', () => {
     if (exportTextLayer) {
       const file = process.env.HMG_LOOKBOOK_TEXT_OUTPUT ? path.resolve(process.env.HMG_LOOKBOOK_TEXT_OUTPUT) : path.join(root, '_work', 'lookbook-text-layer.json'); fs.mkdirSync(path.dirname(file), { recursive: true });
