@@ -7,7 +7,10 @@ const path = require('path');
 const PDFDocument = require('pdfkit');
 
 const root = path.resolve(__dirname, '..');
-const out = path.join(root, 'ANGE_HMG_HOME_Dossier_de_Marque_2026.pdf');
+const exportTextLayer = process.env.HMG_EXPORT_TEXT_LAYER === '1';
+const out = process.env.HMG_BACKGROUND_OUTPUT
+  ? path.resolve(process.env.HMG_BACKGROUND_OUTPUT)
+  : path.join(root, 'ANGE_HMG_HOME_Dossier_de_Marque_2026.pdf');
 const asset = (name) => path.join(root, name);
 
 const photo = {
@@ -61,6 +64,8 @@ const H = 841.89;
 const M = 42;
 const totalPages = 15;
 let doc;
+let currentPage = 0;
+const textLayer = [];
 
 function hex(c) { return c; }
 function rect(x, y, w, h, fill, stroke, lw = 1) {
@@ -81,6 +86,17 @@ function text(t, x, y, opts = {}) {
     font = 'Helvetica', size = 10, color = C.ink, width, align = 'left',
     lineGap = 2, characterSpacing = 0, opacity = 1, oblique = false,
   } = opts;
+  if (exportTextLayer) {
+    doc.save().font(font).fontSize(size);
+    const lineHeight = doc.currentLineHeight(true);
+    const height = doc.heightOfString(t, { width: width || 1000, lineGap, characterSpacing });
+    doc.restore();
+    textLayer.push({
+      page: currentPage, text: t, x, y, width: width || null, height, lineHeight,
+      font, size, color, align, lineGap, characterSpacing, opacity, oblique,
+    });
+    return;
+  }
   doc.save().fillColor(color).font(font).fontSize(size).fillOpacity(opacity);
   doc.text(t, x, y, { width, align, lineGap, characterSpacing, oblique });
   doc.restore();
@@ -115,6 +131,7 @@ function header(kicker, title, page, opts = {}) {
   footer(page, invert);
 }
 function page(fill = C.paper) {
+  currentPage += 1;
   doc.addPage({ size: 'A4', margin: 0 });
   rect(0, 0, W, H, fill);
 }
@@ -492,7 +509,18 @@ function generate() {
   p14_vision();
   p15_contact();
   doc.end();
-  stream.on('finish', () => console.log(`PDF créé : ${out}`));
+  stream.on('finish', () => {
+    if (exportTextLayer) {
+      const textLayerPath = process.env.HMG_TEXT_LAYER_OUTPUT
+        ? path.resolve(process.env.HMG_TEXT_LAYER_OUTPUT)
+        : path.join(root, '_work', 'hmg-text-layer.json');
+      fs.mkdirSync(path.dirname(textLayerPath), { recursive: true });
+      fs.writeFileSync(textLayerPath, JSON.stringify({ width: W, height: H, pages: totalPages, textLayer }, null, 2));
+      console.log(`Fond PDF et calque texte créés : ${out} / ${textLayerPath}`);
+    } else {
+      console.log(`PDF créé : ${out}`);
+    }
+  });
 }
 
 generate();
