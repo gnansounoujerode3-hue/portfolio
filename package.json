@@ -6,7 +6,9 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build:portfolio": "node portfolio-source/generate-portfolio.js",
-    "build:portfolio-editable": "node portfolio-source/generate-portfolio-pptx.js"
+    "build:portfolio-editable": "node portfolio-source/generate-portfolio-pptx.js",
+    "build:lookbook": "node portfolio-source/generate-lookbook.js",
+    "build:lookbook-editable": "node portfolio-source/generate-lookbook-pptx.js"
   },
   "repository": {
     "type": "git",
